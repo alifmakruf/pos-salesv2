@@ -1,4 +1,4 @@
-# HEXA POS Sales – Multi-order Workspace
+# QUARZA by HEXA – Sales Workspace
 
 Frontend prototype using React + Vite, Tailwind CSS, Lucide React and HTML5-Qrcode.
 
