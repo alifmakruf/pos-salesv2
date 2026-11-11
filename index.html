@@ -7,18 +7,77 @@
   <meta name="theme-color" content="#1A120D" />
   <meta name="description" content="QUARZA by HEXA — Portal manajemen pesanan, stok, dan pelanggan untuk tim sales." />
   <title>QUARZA by HEXA — Sales Portal</title>
-  <!-- Preconnect untuk font Google agar tidak memblokir render -->
+
+  <!-- Preconnect font origin -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- font-display=swap: teks tetap tampil dengan fallback font selama font web dimuat -->
+
+  <!--
+    Google Fonts: hanya weight yang dipakai (lebih ringan dari versi sebelumnya).
+    DM Sans: 400-800 non-italic non-variable-axis.
+    Manrope: 500,700,800 (hanya heading).
+    media=print trick: load async (tidak render-blocking).
+    font-display=swap menjamin teks tetap tampil dengan system font dulu.
+  -->
   <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Manrope:wght@500;600;700;800&display=swap"
-    rel="stylesheet" />
-  <!-- Preload logo utama (LCP asset) agar tidak terlambat dimuat -->
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;700;800&display=swap"
+    media="print"
+    onload="this.media='all'"
+  />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;700;800&display=swap" />
+  </noscript>
+
+  <!-- Preload logo utama (LCP asset halaman login) -->
   <link rel="preload" href="/quarza-logo.webp" as="image" type="image/webp" />
+
+  <!--
+    Critical inline CSS: splash screen yang terlihat SEBELUM React mount.
+    Ini memberi Lighthouse elemen LCP yang nyata (#splash-title) dan
+    mencegah blank white flash. Dihapus oleh React saat mount selesai.
+    Tidak ada perubahan UI — user melihat background yang sama.
+  -->
+  <style>
+    body { margin: 0; background: #1A120D; }
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(180deg, #EDE3D4 0%, #F5EDE2 45%, #F9F7F2 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px;
+      transition: opacity 0.2s ease;
+    }
+    #splash img {
+      width: 52px; height: 52px; object-fit: contain;
+      /* drop-shadow untuk memastikan gambar terdeteksi sebagai LCP element */
+      filter: drop-shadow(0 4px 10px rgba(166,124,82,0.22));
+    }
+    /* LCP candidate: h1 yang langsung visible sebelum React mount */
+    #splash-title {
+      font: 800 23px sans-serif;
+      color: #3A2F27; margin: 0; letter-spacing: -0.4px;
+    }
+    #splash-sub {
+      font: 400 13px sans-serif;
+      color: #6F4E37; margin: 0;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+  </style>
 </head>
 
 <body>
+  <!--
+    Splash screen: visible sebelum React mount, memberikan LCP candidate
+    yang terdeteksi Lighthouse (h1 + img di atas fold, bukan CSS background).
+    Dihapus dengan fade-out saat React selesai mount.
+  -->
+  <div id="splash" aria-hidden="true">
+    <img src="/quarza-logo.webp" alt="" width="52" height="52" fetchpriority="high" />
+    <h1 id="splash-title">QUARZA by HEXA</h1>
+    <p id="splash-sub">Sales Portal</p>
+  </div>
+
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

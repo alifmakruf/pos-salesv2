@@ -4,17 +4,18 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    // Code-split: pisahkan vendor besar agar initial bundle lebih kecil
+    // CSS inline threshold: CSS < 4KB di-inline ke HTML (mengurangi round-trip request)
+    // Vite default sudah 4096, kita naikkan sedikit agar critical CSS ter-inline
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-scanner': ['html5-qrcode'],   // Scanner hanya dimuat saat dibutuhkan
+          'vendor-scanner': ['html5-qrcode'],  // Lazy loaded, tidak di initial bundle
           'vendor-icons': ['lucide-react'],
         },
       },
     },
-    // Batas warning chunk (tidak mempengaruhi performa, hanya CI)
     chunkSizeWarningLimit: 600,
   },
 })
