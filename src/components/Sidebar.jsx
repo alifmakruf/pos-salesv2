@@ -62,7 +62,7 @@ export default function Sidebar({ onLogout, page, setPage, drafts = [], activeDr
   return <>
     {open && <button className="sidebar-backdrop" onClick={() => setOpen(false)} aria-label="Tutup menu" />}
     <aside className={`sidebar ${open ? 'sidebar-open' : ''}`}>
-      <div className="brand-row"><div className="brand-mark brand-logo-mark"><img src="/quarza-logo.png" alt="" /></div><div><div className="brand-name">QUARZA</div><div className="brand-sub">BY HEXA</div></div><button className="icon-btn mobile-close" onClick={() => setOpen(false)}><X size={18} /></button></div>
+      <div className="brand-row"><div className="brand-mark brand-logo-mark"><img src="/quarza-logo.webp" alt="" loading="lazy" decoding="async" /></div><div><div className="brand-name">QUARZA</div><div className="brand-sub">BY HEXA</div></div><button className="icon-btn mobile-close" onClick={() => setOpen(false)}><X size={18} /></button></div>
       <div className="side-caption">WORKSPACE</div>
       <nav className="side-nav">
         <button className={`nav-link ${page === 'dashboard' ? 'active' : ''}`} onClick={() => { setPage('dashboard'); setOpen(false) }}><LayoutDashboard size={18} /><span>Beranda</span></button>

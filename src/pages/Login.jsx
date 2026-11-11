@@ -11,7 +11,7 @@ export const LOGIN_CONFIG = {
   showSocialLogin: true,          // Tampilkan deretan tombol Google, Facebook, Apple
   showForgotLink: true,           // Tampilkan teks 'Forgot password?'
   defaultEmail: 'firman@quarza.com', // Nilai awal email untuk demo cepat
-  logoPath: '/quarza-logo.png',   // Path logo QUARZA
+  logoPath: '/quarza-logo.webp', // Path logo QUARZA (WebP ~37KB vs PNG 773KB)
   logoSize: 52,                   // Parameter: Ukuran logo dalam pixel (default 50-52px)
   logoMarginBottom: 16            // Parameter: Jarak bawah logo ke judul (px)
 }
@@ -67,6 +67,8 @@ export default function Login({ onLogin, theme = 'light', setTheme }) {
             alt="QUARZA Logo"
             className="sky-login-logo"
             style={{ width: `${LOGIN_CONFIG.logoSize}px`, height: `${LOGIN_CONFIG.logoSize}px` }}
+            fetchpriority="high"
+            decoding="sync"
           />
         </div>
 

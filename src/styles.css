@@ -1,7 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root{font-family:'DM Sans',sans-serif;font-synthesis:none;text-rendering:optimizeLegibility}*{box-sizing:border-box}body{margin:0;background:#1A120D}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.42;cursor:not-allowed}.app-shell{
+
+/* ===================================================================
+   PERFORMANCE & UX BASELINE
+   - font-display:swap sudah di Google Fonts URL (index.html)
+   - GPU-composited transitions pakai transform/opacity bukan top/margin
+   - Focus-visible: hanya keyboard yang dapat ring, bukan klik mouse
+   - Touch-action: scroll vertical tanpa delay 300ms di mobile
+   =================================================================== */
+:root {
+  font-family: 'DM Sans', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  /* Smooth scroll native CSS — tanpa JS, tanpa library */
+  scroll-behavior: smooth;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: #1A120D; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .42; cursor: not-allowed; }
+
+/* Focus ring hanya saat navigasi keyboard (a11y tanpa mengganggu mouse) */
+:focus-visible {
+  outline: 2px solid #A67C52;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Touch target minimum untuk tombol aksi utama (bukan utility kecil seperti qty) */
+.btn-primary, .btn-outline, .nav-link, .icon-btn, .text-action { min-height: 36px; }
+
+.app-shell {
   --bg:#1A120D; --surface:#2D1F17; --surface2:#1A120D; --surface3:#5B3F2E;
   --line:#5B3F2E; --line2:#A67C52; --text:#F9F7F2; --muted:#DCC6A4; --soft:#A67C52;
   --hint:#A67C52; --accent:#A67C52; --accent2:#DCC6A4; --accent-soft:rgba(166,124,82,.16);
@@ -1162,4 +1194,112 @@
 .customer-order-total b {
   color: var(--price);
   font-size: 13px;
+}
+
+
+/* ===================================================================
+   PERFORMANCE: content-visibility — browser skip render panel
+   yang belum terlihat (off-screen), rendering on-demand saat scroll.
+   contain-intrinsic-size mencegah layout shift saat scroll.
+   =================================================================== */
+.stats-grid,
+.recent-panel,
+.orders-panel,
+.customer-history-list {
+  content-visibility: auto;
+  /* Parameter: sesuaikan dengan tinggi estimasi konten panel tersebut */
+  contain-intrinsic-size: 0 300px;
+}
+
+/* ===================================================================
+   UX: Smooth overscroll & momentum scroll di mobile
+   -webkit-overflow-scrolling: touch = native iOS inertia scroll
+   overscroll-behavior: contain = scroll tidak bocor ke parent (bounce)
+   =================================================================== */
+.cart-items,
+.side-draft-list,
+.table-wrap,
+.order-filters,
+.category-row {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* touch-action: pan-y = responsif tanpa delay 300ms di mobile */
+  touch-action: pan-y;
+}
+
+/* ===================================================================
+   UX: Transition GPU-composited (transform + opacity) untuk hover.
+   Tidak memicu layout reflow seperti top/margin/height.
+   =================================================================== */
+.product-card,
+.flow-method-card,
+.btn-primary,
+.btn-outline,
+.nav-link {
+  will-change: transform;
+}
+
+/* ===================================================================
+   UX: Skeleton loading placeholder (optional, tanpa JS)
+   Pakai CSS animation pure, 0 JS, 0 deps
+   =================================================================== */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface3) 50%, var(--surface) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+/* ===================================================================
+   UX: Reduced motion — hormati preferensi aksesibilitas user
+   =================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ===================================================================
+   RESPONSIVE: Safe area padding untuk notch / home indicator
+   (iPhone X+, Android dengan gesture nav bar)
+   =================================================================== */
+.main-area {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.sidebar {
+  padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ===================================================================
+   UX: Topbar sticky di mobile agar judul & aksi selalu terlihat
+   =================================================================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* ===================================================================
+   UX: Table responsif di mobile pakai horizontal scroll bukan overflow
+   =================================================================== */
+@media (max-width: 760px) {
+  .table-wrap {
+    margin: 0 -16px;
+    padding: 0 16px;
+    width: calc(100% + 32px);
+  }
+  /* Touch target lebih besar di mobile */
+  .qty-control button {
+    width: 28px;
+    height: 28px;
+  }
+  .row-arrow {
+    width: 34px;
+    height: 34px;
+  }
 }
