@@ -15,6 +15,14 @@
   text-rendering: optimizeLegibility;
   /* Smooth scroll native CSS — tanpa JS, tanpa library */
   scroll-behavior: smooth;
+
+  /* === PARAMETER KUSTOMISASI RESPONSIVE TABLE & ITEM LIST (Bisa disesuaikan sendiri) === */
+  --table-min-width: 620px;               /* Lebar minimum tabel agar kolom tidak terhimpit di mobile */
+  --table-cell-padding-mobile: 10px 10px; /* Padding sel tabel (th & td) pada layar mobile */
+  --table-font-size-mobile: 11px;         /* Ukuran font konten tabel pada layar mobile */
+  --itemlist-thumb-mobile: 46px;          /* Ukuran thumbnail gambar item pada layar mobile */
+  --itemlist-padding-mobile: 10px 0;      /* Padding atas-bawah itemlist pada layar mobile */
+  --itemlist-title-clamp: 2;              /* Batas baris teks nama barang (agar tidak terpotong 1 baris) */
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: #1A120D; }
@@ -1285,21 +1293,216 @@ button:disabled { opacity: .42; cursor: not-allowed; }
 }
 
 /* ===================================================================
-   UX: Table responsif di mobile pakai horizontal scroll bukan overflow
+   RESPONSIVE: Table & Itemlist System (Scaleable di banyak device)
+   - Tabel: smooth horizontal container tanpa merusak card panel
+   - Scrollbar tipis elegan yang serasi dengan tema QUARZA
+   - Itemlist: auto-wrapping cerdas agar tidak terpotong / gepeng
    =================================================================== */
-@media (max-width: 760px) {
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  max-width: 100%;
+  border-radius: inherit;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line2) transparent;
+}
+.table-wrap::-webkit-scrollbar {
+  height: 4px;
+}
+.table-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.table-wrap::-webkit-scrollbar-thumb {
+  background: var(--line2);
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  /* Kontainer tabel pas di dalam panel tanpa merusak border radius */
   .table-wrap {
-    margin: 0 -16px;
-    padding: 0 16px;
-    width: calc(100% + 32px);
+    margin: 0;
+    padding: 0;
+    width: 100%;
   }
-  /* Touch target lebih besar di mobile */
-  .qty-control button {
+  table {
+    min-width: var(--table-min-width, 620px);
+  }
+  th {
+    padding: var(--table-cell-padding-mobile, 10px 10px);
+    font-size: 9px;
+    letter-spacing: 0.2px;
+  }
+  td {
+    padding: var(--table-cell-padding-mobile, 10px 10px);
+    font-size: var(--table-font-size-mobile, 11px);
+    white-space: nowrap;
+  }
+
+  /* Sel produk & pelanggan di dalam tabel bisa membungkus teks dengan rapi */
+  .stock-product-cell,
+  .customer-info-cell {
+    min-width: 150px;
+    white-space: normal;
+  }
+  .stock-product-cell b,
+  .customer-info-cell b {
+    display: block;
+    white-space: normal;
+    line-height: 1.35;
+    font-size: 11px;
+  }
+  .stock-product-thumb {
+    width: 32px;
+    height: 32px;
+  }
+  .customer-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+
+  /* Touch target tombol aksi di baris tabel */
+  .row-arrow {
+    width: 32px;
+    height: 32px;
+  }
+  .stock-qty-btn {
     width: 28px;
     height: 28px;
   }
-  .row-arrow {
-    width: 34px;
+
+  /* Responsif filter stok di mobile */
+  .stock-filter-row {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .stock-filter-row .order-filters {
+    flex: 1;
+    min-width: 0;
+  }
+  .stock-sort-wrap {
+    flex-shrink: 0;
     height: 34px;
+  }
+
+  /* Item list di keranjang belanja (Cart Panel / Drawer) */
+  .cart-item {
+    padding: var(--itemlist-padding-mobile, 10px 0);
+    gap: 10px;
+  }
+  .cart-thumb {
+    width: var(--itemlist-thumb-mobile, 46px);
+    height: var(--itemlist-thumb-mobile, 46px);
+  }
+  .cart-item-main > b {
+    font-size: 11px;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: var(--itemlist-title-clamp, 2);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.35;
+  }
+  .cart-item-end > b {
+    font-size: 11px;
+  }
+}
+
+/* Penataan responsif untuk Item List Ringkasan Pesanan (Flow Summary) */
+@media (max-width: 640px) {
+  .flow-summary-item {
+    display: grid;
+    grid-template-columns: var(--itemlist-thumb-mobile, 46px) 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 6px 12px;
+    align-items: center;
+    padding: 12px 0;
+  }
+  .flow-summary-thumb {
+    width: var(--itemlist-thumb-mobile, 46px);
+    height: var(--itemlist-thumb-mobile, 46px);
+    grid-row: span 2;
+  }
+  .flow-summary-item-name {
+    grid-column: 2;
+    min-width: 0;
+  }
+  .flow-summary-item-name b {
+    font-size: 12px;
+    white-space: normal;
+    line-height: 1.35;
+  }
+  .flow-summary-item > strong {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .flow-summary-item .qty-control {
+    grid-column: 2 / span 2;
+    grid-row: 2;
+    justify-self: end;
+    margin-top: 0;
+  }
+}
+
+/* Penataan responsif untuk Item List di Modal Detail Pesanan & Modal Customer */
+@media (max-width: 520px) {
+  .detail-customer {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .detail-item {
+    gap: 10px;
+    padding: 9px 0;
+  }
+  .detail-item div:nth-child(2) {
+    min-width: 0;
+  }
+  .detail-item b {
+    font-size: 11px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+  .detail-item strong {
+    font-size: 11px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Ringkasan metrik di modal customer */
+  .customer-detail-summary {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 11px;
+  }
+  .customer-detail-summary .detail-stat:last-child {
+    grid-column: span 2;
+  }
+  .customer-order-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .customer-item-row {
+    font-size: 10px;
+    gap: 6px;
+  }
+
+  /* Kartu draf pesanan aktif di dashboard */
+  .active-draft-card {
+    padding: 10px;
+    gap: 9px;
+  }
+  .active-draft-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 11px;
+  }
+  .active-draft-copy b {
+    font-size: 11px;
   }
 }
