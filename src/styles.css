@@ -17,6 +17,7 @@
   scroll-behavior: smooth;
 
   /* === PARAMETER KUSTOMISASI RESPONSIVE TABLE & ITEM LIST (Bisa disesuaikan sendiri) === */
+  --table-touch-action: pan-x pan-y;      /* Gesture touch tabel di HP: pan-x pan-y agar bisa digeser horizontal & vertikal */
   --table-min-width: 620px;               /* Lebar minimum tabel agar kolom tidak terhimpit di mobile */
   --table-cell-padding-mobile: 10px 10px; /* Padding sel tabel (th & td) pada layar mobile */
   --table-font-size-mobile: 11px;         /* Ukuran font konten tabel pada layar mobile */
@@ -1224,15 +1225,21 @@ button:disabled { opacity: .42; cursor: not-allowed; }
    -webkit-overflow-scrolling: touch = native iOS inertia scroll
    overscroll-behavior: contain = scroll tidak bocor ke parent (bounce)
    =================================================================== */
+/* Scroll vertikal murni */
 .cart-items,
-.side-draft-list,
+.side-draft-list {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+/* Scroll horizontal & bidirectional (Tabel & Filter chips di HP) */
 .table-wrap,
 .order-filters,
 .category-row {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  /* touch-action: pan-y = responsif tanpa delay 300ms di mobile */
-  touch-action: pan-y;
+  touch-action: var(--table-touch-action, pan-x pan-y);
 }
 
 /* ===================================================================
@@ -1302,6 +1309,7 @@ button:disabled { opacity: .42; cursor: not-allowed; }
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+  touch-action: var(--table-touch-action, pan-x pan-y);
   max-width: 100%;
   border-radius: inherit;
   scrollbar-width: thin;
@@ -1324,6 +1332,9 @@ button:disabled { opacity: .42; cursor: not-allowed; }
     margin: 0;
     padding: 0;
     width: 100%;
+    overflow-x: auto !important;
+    touch-action: var(--table-touch-action, pan-x pan-y) !important;
+    -webkit-overflow-scrolling: touch;
   }
   table {
     min-width: var(--table-min-width, 620px);
