@@ -7,6 +7,7 @@ import ProductArt from '../components/ProductArt'
    PARAMETER PENGATURAN STOK (Bisa disesuaikan sendiri)
    ======================================================== */
 export const STOCK_CONFIG = {
+  allowStockAdjustment: false, // Parameter: false = sales hanya lihat sisa stok (read-only), true = tampilkan tombol +/-
   lowStockThreshold: 5,        // Batas stok tipis: <= 5 dianggap 'Menipis'
   categories: ['Semua', 'Meja', 'Kursi', 'Sofa', 'Lemari', 'Rak'], // Daftar kategori produk
   sortByOptions: ['Nama (A-Z)', 'Stok Terendah', 'Stok Tertinggi', 'Harga Tertinggi']
@@ -171,7 +172,7 @@ export default function Stock() {
                 <th>Harga Satuan</th>
                 <th>Jumlah Stok</th>
                 <th>Status</th>
-                <th style={{ textAlign: 'right' }}>Sesuaikan Stok</th>
+                {STOCK_CONFIG.allowStockAdjustment && <th style={{ textAlign: 'right' }}>Sesuaikan Stok</th>}
               </tr>
             </thead>
             <tbody>
@@ -209,29 +210,31 @@ export default function Stock() {
                         <span className="status-pill paid"><i></i> Aman</span>
                       )}
                     </td>
-                    <td>
-                      <div className="stock-qty-actions">
-                        <button
-                          type="button"
-                          className="stock-qty-btn"
-                          disabled={p.stock <= 0}
-                          onClick={() => adjustStock(p.id, -1)}
-                          title="Kurangi 1 unit"
-                          aria-label="Kurangi 1 unit"
-                        >
-                          <Minus size={13}/>
-                        </button>
-                        <button
-                          type="button"
-                          className="stock-qty-btn add"
-                          onClick={() => adjustStock(p.id, 1)}
-                          title="Tambah 1 unit"
-                          aria-label="Tambah 1 unit"
-                        >
-                          <Plus size={13}/>
-                        </button>
-                      </div>
-                    </td>
+                    {STOCK_CONFIG.allowStockAdjustment && (
+                      <td>
+                        <div className="stock-qty-actions">
+                          <button
+                            type="button"
+                            className="stock-qty-btn"
+                            disabled={p.stock <= 0}
+                            onClick={() => adjustStock(p.id, -1)}
+                            title="Kurangi 1 unit"
+                            aria-label="Kurangi 1 unit"
+                          >
+                            <Minus size={13}/>
+                          </button>
+                          <button
+                            type="button"
+                            className="stock-qty-btn add"
+                            onClick={() => adjustStock(p.id, 1)}
+                            title="Tambah 1 unit"
+                            aria-label="Tambah 1 unit"
+                          >
+                            <Plus size={13}/>
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 )
               })}

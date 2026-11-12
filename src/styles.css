@@ -537,21 +537,27 @@ button:disabled { opacity: .42; cursor: not-allowed; }
   font-weight: 600;
 }
 .sky-social-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 11px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 .sky-social-btn {
-  height: 42px;
+  height: 44px;
+  width: 100%;
   border-radius: 12px;
   border: 1px solid #E8DDD0;
   background: #FFFFFF;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(64, 25, 30, 0.04);
   transition: background-color .15s ease, border-color .15s ease, transform .15s ease;
   color: #3A2F27;
+  font-size: 13px;
+  font-weight: 600;
 }
 .sky-social-btn:hover {
   background: #F4ECE1;
